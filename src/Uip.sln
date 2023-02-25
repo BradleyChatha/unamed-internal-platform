@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.CredentialBroker", "Uip.CredentialBroker\Uip.CredentialBroker.csproj", "{81EE1DDC-7055-4358-9F77-C1AD00E08A9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.CredentialBroker.Tests", "Uip.CredentialBroker.Tests\Uip.CredentialBroker.Tests.csproj", "{1FEEEF93-07D2-4A5C-9BA0-1373C3F912F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.Common", "Uip.Common\Uip.Common.csproj", "{2A62A991-DC78-4DED-BF9A-31DA4A9FF874}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.Permissions", "Uip.Permissions\Uip.Permissions.csproj", "{2384387B-7687-4895-A8DF-3D0638499F59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.Common.Tests", "Uip.Common.Tests\Uip.Common.Tests.csproj", "{D343F564-F1FE-433F-A2B9-42D3424F4C98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uip.Perimssions.Tests", "Uip.Perimssions.Tests\Uip.Perimssions.Tests.csproj", "{6C762283-F4A8-434F-9CE0-CDEFC93069DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{134D70BF-0958-4ADA-8AA0-2A966154A8FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{134D70BF-0958-4ADA-8AA0-2A966154A8FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{134D70BF-0958-4ADA-8AA0-2A966154A8FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{134D70BF-0958-4ADA-8AA0-2A966154A8FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81EE1DDC-7055-4358-9F77-C1AD00E08A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81EE1DDC-7055-4358-9F77-C1AD00E08A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81EE1DDC-7055-4358-9F77-C1AD00E08A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81EE1DDC-7055-4358-9F77-C1AD00E08A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FEEEF93-07D2-4A5C-9BA0-1373C3F912F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FEEEF93-07D2-4A5C-9BA0-1373C3F912F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FEEEF93-07D2-4A5C-9BA0-1373C3F912F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FEEEF93-07D2-4A5C-9BA0-1373C3F912F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A62A991-DC78-4DED-BF9A-31DA4A9FF874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A62A991-DC78-4DED-BF9A-31DA4A9FF874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A62A991-DC78-4DED-BF9A-31DA4A9FF874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A62A991-DC78-4DED-BF9A-31DA4A9FF874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2384387B-7687-4895-A8DF-3D0638499F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2384387B-7687-4895-A8DF-3D0638499F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2384387B-7687-4895-A8DF-3D0638499F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2384387B-7687-4895-A8DF-3D0638499F59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D343F564-F1FE-433F-A2B9-42D3424F4C98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D343F564-F1FE-433F-A2B9-42D3424F4C98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D343F564-F1FE-433F-A2B9-42D3424F4C98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D343F564-F1FE-433F-A2B9-42D3424F4C98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C762283-F4A8-434F-9CE0-CDEFC93069DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C762283-F4A8-434F-9CE0-CDEFC93069DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C762283-F4A8-434F-9CE0-CDEFC93069DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C762283-F4A8-434F-9CE0-CDEFC93069DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

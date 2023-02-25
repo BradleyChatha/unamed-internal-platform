@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  permission_postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  kratos_postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+
+  integration_postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  smtp:
+    image: maildev/maildev
+    restart: always
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  kratos:
+    image: oryd/kratos:v0.11
+    command: serve --config /etc/mount/kratos.yaml --dev --watch-courier
+    restart: always
+    environment: {}
+    ports:
+      - "4433:4433"
+      - "4434:4434"
+    volumes:
+      - ./kratos/kratos.yaml:/etc/mount/kratos.yaml
+      - ../config/kratos/identities/user.schema.json:/etc/identities/user.schema.json
+    links:
+      - kratos_postgres
+      - smtp
+
+  kratos_migrate:
+    image: oryd/kratos:v0.11
+    command: migrate sql -e -y --config /etc/mount/kratos.yaml
+    environment: {}
+    volumes:
+      - ./kratos/kratos.yaml:/etc/mount/kratos.yaml
+      - ../config/kratos/identities/user.schema.json:/etc/identities/user.schema.json
+    links:
+      - kratos_postgres

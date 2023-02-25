@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Uip.CredentialBroker";
+
+package broker;
+
+service DatabaseBroker {
+  rpc CreateCredentials (CreateCredentialsRequest) returns (CreateCredentialsResponse);
+}
+
+// The request message containing the user's name.
+message CreateCredentialsRequest {
+  string pluginId = 1;
+}
+
+// The response message containing the greetings.
+message CreateCredentialsResponse {
+  string host = 1;
+  uint32 port = 2;
+  string username = 3;
+  string password = 4;
+  string dbname = 5;
+  google.protobuf.Timestamp expires = 6;
+}

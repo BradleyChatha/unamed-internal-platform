@@ -1,0 +1,8 @@
+:9000/api/kratos/* {
+    uri strip_prefix /api/kratos
+    reverse_proxy http://localhost:4433
+}
+
+:9000/ui, :9000/ui/* {
+    reverse_proxy http://localhost:5173
+}

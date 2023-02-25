@@ -1,0 +1,5 @@
+bin
+obj
+.config
+.vscode/launch.json
+.vscode/tasks.json

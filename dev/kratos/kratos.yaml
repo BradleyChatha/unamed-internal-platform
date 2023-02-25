@@ -1,0 +1,98 @@
+version: v0.11.1
+
+identity:
+  default_schema_id: user
+  schemas:
+    - id: user
+      url: file:///etc/identities/user.schema.json
+
+dsn: "postgres://postgres:postgres@kratos_postgres:5432/postgres?sslmode=disable"
+
+selfservice:
+  default_browser_return_url: http://localhost:9000
+
+  flows:
+    verification:
+      enabled: true
+      ui_url: http://localhost:9000/auth/verification
+      lifespan: "1h"
+      use: code
+    registration:
+      enabled: true
+      ui_url: http://localhost:9000/auth/registration
+      lifespan: "1h"
+    settings:
+      ui_url: http://localhost:9000/auth/settings
+      lifespan: "1h"
+      privileged_session_max_age: "1h"
+      required_aal: highest_available
+    recovery:
+      enabled: true
+      ui_url: http://localhost:9000/ui/auth/recovery
+      lifespan: "1h"
+      use: code
+    login:
+      ui_url: http://localhost:9000/auth/login
+      lifespan: "1h"
+
+  methods:
+    code:
+      enabled: true
+    link:
+      enabled: true
+    lookup_secret:
+      enabled: true
+    password:
+      enabled: true
+    profile:
+      enabled: true
+    totp:
+      enabled: true
+      config:
+        issuer: UIP localhost
+    webauthn:
+      enabled: true
+      config:
+        passwordless: false
+        rp:
+          display_name: UIP
+          id: localhost
+
+courier:
+  message_retries: 5
+  smtp:
+    connection_uri: smtps://foo:bar@smtp:1025/?skip_ssl_verify=false
+    from_address: no-reply@uip.chatha.dev
+    local_name: localhost
+
+serve:
+  public:
+    host: "0.0.0.0"
+    port: 4433
+    base_url: http://localhost:9000/kratos
+  admin:
+    host: "0.0.0.0"
+    port: 4434
+
+log:
+  level: debug
+  leak_sensitive_values: true
+  format: text
+
+secrets:
+  cookie:
+    - ipsumipsumipsumi
+  cipher:
+    - ipsumipsumipsumipsumipsumipsumip
+  default:
+    - ipsumipsumipsumi
+
+hashers:
+  algorithm: bcrypt
+  bcrypt:
+    cost: 4
+
+ciphers:
+  algorithm: noop
+
+  

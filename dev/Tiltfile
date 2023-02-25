@@ -1,0 +1,132 @@
+load("ext://uibutton", "cmd_button", "text_input")
+
+docker_compose('./docker-compose.yaml')
+
+#### Run External Services ####
+
+local_resource(
+    "Caddy",
+    serve_cmd="caddy run --config ./Caddyfile --watch",
+    serve_dir="./",
+    labels=["external"]
+)
+
+#### Run Services ####
+
+local_resource(
+    "Permissions",
+    serve_cmd="dotnet watch --non-interactive",
+    serve_dir="../src/Uip.Permissions",
+    serve_env={
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE__HOST": "localhost",
+        "DATABASE__PORT": "5432",
+        "DATABASE__USERNAME": "postgres",
+        "DATABASE__PASSWORD": "postgres",
+        "KRATOS__BASEPATH": "http://localhost:4434",
+    },
+    labels=["running"]
+)
+
+#### Run UI ####
+
+local_resource(
+    "WebUI",
+    serve_cmd="npm run dev",
+    serve_dir="../src/WebUI",
+    labels=["running"]
+)
+cmd_button(
+    "webui:browsertest",
+    text="Browser Test",
+    resource="WebUI",
+    argv=["bash", "-c", """
+        cd ../src/WebUI;
+        npm run test;
+    """],
+)
+
+# local_resource(
+#     "WebUI - svelte-check",
+#     serve_cmd="npm run check:watch",
+#     serve_dir="../src/WebUI",
+#     labels=["running"]
+# )
+
+local_resource(
+    "WebUI - Tests",
+    serve_cmd="npm run test:unit",
+    serve_dir="../src/WebUI",
+    labels=["tests"]
+)
+
+# NOTE: Anytime this resource runs, you need to manually restart the WebUI running resource
+#       this is because a different process changes some generated files - causing not found errors
+local_resource(
+    "WebUI - Browser Tests",
+    cmd="npm run test",
+    dir="../src/WebUI",
+    deps=["../src/WebUI/tests/"],
+    labels=["tests"]
+)
+
+#### Tests Services ####
+
+local_resource(
+    "CredentialBroker - Tests",
+    serve_cmd="dotnet watch test",
+    serve_dir="../src/Uip.CredentialBroker.Tests",
+    labels=["tests"]
+)
+
+local_resource(
+    "Common - Tests",
+    serve_cmd="dotnet watch test",
+    serve_dir="../src/Uip.Common.Tests",
+    labels=["tests"]
+)
+
+local_resource(
+    "Permissions - Tests",
+    serve_cmd="dotnet watch test",
+    serve_dir="../src/Uip.Perimssions.Tests",
+    labels=["tests"]
+)
+
+#### Database migration ####
+
+local_resource(
+    "Database Migrations",
+    cmd="Please use the buttons at the top",
+    labels=["manual"]
+)
+cmd_button(
+    "Create Migration",
+    resource="Database Migrations",
+    argv=["fish", "-c", """
+        cd ../src/$PROJECT;
+
+        export DATABASE__HOST=localhost;
+        export DATABASE__PORT=5433;
+        export DATABASE__USERNAME=postgres;
+        export DATABASE__PASSWORD=postgres;
+        dotnet ef migrations add $MIGRATION_NAME;
+    """],
+    requires_confirmation=True,
+    inputs=[text_input("PROJECT"), text_input("MIGRATION_NAME")]
+)
+cmd_button(
+    "Remove Last Migration",
+    resource="Database Migrations",
+    argv=["fish", "-c", """
+        cd ../src/$PROJECT;
+
+        export DATABASE__HOST=localhost;
+        export DATABASE__PORT=5433;
+        export DATABASE__USERNAME=postgres;
+        export DATABASE__PASSWORD=postgres;
+        dotnet ef migrations remove -f;
+    """],
+    requires_confirmation=True,
+    inputs=[text_input("PROJECT")]
+)

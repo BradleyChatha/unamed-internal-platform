@@ -1,0 +1,188 @@
+syntax = "proto3";
+
+option csharp_namespace = "Uip.Permissions";
+
+package permissions;
+
+service Permissions {
+  rpc UpsertRole(UpsertRoleRequest) returns (UpsertRoleResponse) {}
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {}
+
+  rpc UpsertActionPolicyDocument(UpsertActionPolicyDocumentRequest) returns (UpsertActionPolicyDocumentResponse) {}
+  rpc GetActionPolicyDocument(GetActionPolicyDocumentRequest) returns (GetActionPolicyDocumentResponse) {}
+  rpc ListActionPolicyDocuments(ListActionPolicyDocumentsRequest) returns (ListActionPolicyDocumentsResponse) {}
+  rpc DeleteActionPolicyDocument(DeleteActionPolicyDocumentRequest) returns (DeleteActionPolicyDocumentResponse) {}
+  rpc AttachActionPolicyDocumentToRole(AttachActionPolicyDocumentToRoleRequest) returns (AttachActionPolicyDocumentToRoleResponse) {}
+  rpc DetachActionPolicyDocumentFromRole(DetachActionPolicyDocumentFromRoleRequest) returns (DetachActionPolicyDocumentFromRoleResponse) {}
+  rpc ListActionPolicyDocumentsForRole(ListActionPolicyDocumentsForRoleRequest) returns (ListActionPolicyDocumentsForRoleResponse) {}
+
+  rpc AttachRoleToUser(AttachRoleToUserRequest) returns (AttachRoleToUserResponse) {}
+  rpc DetachRoleFromUser(DetachRoleFromUserRequest) returns (DetachRoleFromUserResponse) {}
+  rpc ListRolesForUser(ListRolesForUserRequest) returns (ListRolesForUserResponse) {}
+}
+
+service PrivatePermissions {
+  rpc UserCanPerformAction(UserCanPerformActionRequest) returns (UserCanPerformActionResponse) {}
+}
+
+//// Common Types ////
+
+message GenericResponse {
+  bool Success = 1;
+  string ErrorId = 2;
+  string Message = 3;
+}
+
+message GrpcRoleDto {
+  string IdGuid = 1;
+  string Name = 2;
+  string Description = 3;
+}
+
+message GrpcActionPolicyStatementDto {
+  string Name = 1;
+  repeated string Actions = 2;
+  repeated string KeyValueMatchStrings = 3;
+}
+
+message GrpcActionPolicyDocumentDto {
+  string IdGuid = 1;
+  string Name = 2;
+  string Description = 3;
+  repeated GrpcActionPolicyStatementDto Statements = 4;
+}
+
+//// Request/Response Types ////
+
+message UpsertRoleRequest {
+  GrpcRoleDto Role = 1;
+}
+
+message UpsertRoleResponse {
+  GenericResponse Response = 1;
+}
+
+message GetRoleRequest {
+  string IdGuid = 1;
+}
+
+message GetRoleResponse {
+  GenericResponse Response = 1;
+  GrpcRoleDto Role = 2;
+}
+
+message ListRolesRequest {
+}
+
+message ListRolesResponse {
+  GenericResponse Response = 1;
+  repeated GrpcRoleDto Roles = 2;
+}
+
+message DeleteRoleRequest {
+  string IdGuid = 1;
+}
+
+message DeleteRoleResponse {
+  GenericResponse Response = 1;
+}
+
+message UpsertActionPolicyDocumentRequest {
+  GrpcActionPolicyDocumentDto ActionPolicyDocument = 1;
+}
+
+message UpsertActionPolicyDocumentResponse {
+  GenericResponse Response = 1;
+}
+
+message GetActionPolicyDocumentRequest {
+  string IdGuid = 1;
+}
+
+message GetActionPolicyDocumentResponse {
+  GenericResponse Response = 1;
+  GrpcActionPolicyDocumentDto ActionPolicyDocument = 2;
+}
+
+message ListActionPolicyDocumentsRequest {
+}
+
+message ListActionPolicyDocumentsResponse {
+  GenericResponse Response = 1;
+  repeated GrpcActionPolicyDocumentDto ActionPolicyDocuments = 2;
+}
+
+message DeleteActionPolicyDocumentRequest {
+  string IdGuid = 1;
+}
+
+message DeleteActionPolicyDocumentResponse {
+  GenericResponse Response = 1;
+}
+
+message AttachActionPolicyDocumentToRoleRequest {
+  string ActionPolicyDocumentIdGuid = 1;
+  string RoleIdGuid = 2;
+}
+
+message AttachActionPolicyDocumentToRoleResponse {
+  GenericResponse Response = 1;
+}
+
+message DetachActionPolicyDocumentFromRoleRequest {
+  string ActionPolicyDocumentIdGuid = 1;
+  string RoleIdGuid = 2;
+}
+
+message DetachActionPolicyDocumentFromRoleResponse {
+  GenericResponse Response = 1;
+}
+
+message ListActionPolicyDocumentsForRoleRequest {
+  string RoleIdGuid = 1;
+}
+
+message ListActionPolicyDocumentsForRoleResponse {
+  GenericResponse Response = 1;
+  repeated GrpcActionPolicyDocumentDto ActionPolicyDocuments = 2;
+}
+
+message AttachRoleToUserRequest {
+  string RoleIdGuid = 1;
+  string UserIdGuid = 2;
+}
+
+message AttachRoleToUserResponse {
+  GenericResponse Response = 1;
+}
+
+message DetachRoleFromUserRequest {
+  string RoleIdGuid = 1;
+  string UserIdGuid = 2;
+}
+
+message DetachRoleFromUserResponse {
+  GenericResponse Response = 1;
+}
+
+message ListRolesForUserRequest {
+  string UserIdGuid = 1;
+}
+
+message ListRolesForUserResponse {
+  GenericResponse Response = 1;
+  repeated GrpcRoleDto Roles = 2;
+}
+
+message UserCanPerformActionRequest {
+  string UserIdGuid = 1;
+  string Action = 2;
+  map<string,string> ResourceKeyValues = 3;
+}
+
+message UserCanPerformActionResponse {
+  GenericResponse Response = 1;
+  bool CanPerformAction = 2;
+}
