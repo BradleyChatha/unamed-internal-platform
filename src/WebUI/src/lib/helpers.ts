@@ -1,7 +1,7 @@
 import { GenericResponse, GrpcWebError } from './protos/permissions';
 
 export type HasGenericResponse = {
-	Response: GenericResponse;
+	Response: GenericResponse | undefined;
 };
 
 export class UipError extends Error {
@@ -14,7 +14,7 @@ export async function maybeUipError<T extends HasGenericResponse>(f: () => Promi
 	try {
 		const result = await f();
 
-		if (!result.Response.Success)
+		if (result.Response && !result.Response.Success)
 			throw new UipError(result.Response.ErrorId, result.Response.Message);
 
 		return result;
