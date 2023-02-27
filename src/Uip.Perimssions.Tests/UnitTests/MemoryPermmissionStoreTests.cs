@@ -1,3 +1,4 @@
+using Uip.Common;
 using Uip.Permissions.Implementations.Memory;
 using Uip.Permissions.Interfaces;
 
@@ -21,10 +22,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(document);
 
         // Assert
-        (await store.QueryActionPolicyDocuments())
-            .Count()
-            .Should()
-            .Be(1);
+        store.CountActionPolicyDocuments().Should().Be(1);
     }
 
     [Fact]
@@ -44,9 +42,8 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(document with { Description = "test2" });
 
         // Assert
-        (await store.QueryActionPolicyDocuments())
-            .Single()
-            .Description.Should()
+        (await store.GetActionPolicyDocument(document.Id))!.Description
+            .Should()
             .Be("test2");
     }
 
@@ -61,10 +58,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(role);
 
         // Assert
-        (await store.QueryRoles())
-            .Count()
-            .Should()
-            .Be(1);
+        store.CountRoles().Should().Be(1);
     }
 
     [Fact]
@@ -79,9 +73,8 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(role with { Description = "test2" });
 
         // Assert
-        (await store.QueryRoles())
-            .Single()
-            .Description.Should()
+        (await store.GetRole(role.Id))!.Description
+            .Should()
             .Be("test2");
     }
 
@@ -96,10 +89,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(mapping);
 
         // Assert
-        (await store.QueryRoleActionPolicyMappings())
-            .Count()
-            .Should()
-            .Be(1);
+        store.CountRoleActionPolicyMappings().Should().Be(1);
     }
 
     [Fact]
@@ -113,10 +103,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Upsert(mapping);
 
         // Assert
-        (await store.QueryUserRoleMappings())
-            .Count()
-            .Should()
-            .Be(1);
+        store.CountUserRoleMappings().Should().Be(1);
     }
 
     [Fact]
@@ -136,10 +123,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Delete(new[] { document });
 
         // Assert
-        (await store.QueryActionPolicyDocuments())
-            .Count()
-            .Should()
-            .Be(0);
+        store.CountActionPolicyDocuments().Should().Be(0);
     }
 
     [Fact]
@@ -154,10 +138,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Delete(new[] { role });
 
         // Assert
-        (await store.QueryRoles())
-            .Count()
-            .Should()
-            .Be(0);
+        store.CountRoles().Should().Be(0);
     }
 
     [Fact]
@@ -172,10 +153,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Delete(new[] { mapping });
 
         // Assert
-        (await store.QueryRoleActionPolicyMappings())
-            .Count()
-            .Should()
-            .Be(0);
+        store.CountRoleActionPolicyMappings().Should().Be(0);
     }
 
     [Fact]
@@ -190,10 +168,7 @@ public class MemoryPermissionStoreAsyncTests
         await store.Delete(new[] { mapping });
 
         // Assert
-        (await store.QueryUserRoleMappings())
-            .Count()
-            .Should()
-            .Be(0);
+        store.CountUserRoleMappings().Should().Be(0);
     }
 
     [Fact]
@@ -255,5 +230,22 @@ public class MemoryPermissionStoreAsyncTests
 
         // Assert
         result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ListRoles_Happy()
+    {
+        // Arrange
+        var store = new MemoryPermissionStoreAsync();
+        var role1 = new RoleDto(Guid.NewGuid(), "name1", "description1");
+        var role2 = new RoleDto(Guid.NewGuid(), "name2", "description2");
+        await store.Upsert(role1);
+        await store.Upsert(role2);
+
+        // Act
+        var result = await store.ListRoles().ToListAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(new[] { role1, role2 });
     }
 }

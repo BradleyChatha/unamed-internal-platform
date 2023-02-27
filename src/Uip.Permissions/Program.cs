@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Uip.Common;
 using Uip.Common.Auth;
+using Uip.Permissions.Implementations.Composable;
 using Uip.Permissions.Implementations.Database;
 using Uip.Permissions.Implementations.Database.Model;
 using Uip.Permissions.Interfaces;
@@ -30,6 +31,7 @@ builder.Services.AddSingleton<Ory.Kratos.Client.Api.IFrontendApiAsync>(_ =>
     return new Ory.Kratos.Client.Api.FrontendApi(config);
 });
 builder.Services.AddScoped<IPermissionStoreAsync, DatabasePermissionStoreAsync>();
+builder.Services.AddScoped<IPermissionCheckerAsync, DatastoreBackedPermissionCheckerAsync>();
 
 var app = builder.Build();
 
@@ -43,9 +45,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseGrpcWeb();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGrpcService<PermissionsService>();
+app.MapGrpcService<PermissionsService>().EnableGrpcWeb();
 
 app.Run();

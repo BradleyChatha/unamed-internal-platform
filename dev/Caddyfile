@@ -3,6 +3,11 @@
     reverse_proxy http://localhost:4433
 }
 
+:9000/api/permissions/* {
+    uri strip_prefix /api/permissions
+    reverse_proxy http://localhost:5104
+}
+
 :9000/ui, :9000/ui/* {
     reverse_proxy http://localhost:5173
 }

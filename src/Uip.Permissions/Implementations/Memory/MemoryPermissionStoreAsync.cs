@@ -1,3 +1,4 @@
+using Uip.Common;
 using Uip.Permissions.Interfaces;
 
 namespace Uip.Permissions.Implementations.Memory;
@@ -16,6 +17,26 @@ internal sealed class MemoryPermissionStoreAsync : IPermissionStoreAsync
         this._roles = new List<RoleDto>();
         this._roleActionPolicyMappings = new List<RoleActionPolicyMappingDto>();
         this._userRoleMappings = new List<UserRoleMappingDto>();
+    }
+
+    public int CountActionPolicyDocuments()
+    {
+        return this._actionPolicyDocuments.Count;
+    }
+
+    public int CountRoles()
+    {
+        return this._roles.Count;
+    }
+
+    public int CountRoleActionPolicyMappings()
+    {
+        return this._roleActionPolicyMappings.Count;
+    }
+
+    public int CountUserRoleMappings()
+    {
+        return this._userRoleMappings.Count;
     }
 
     public Task Delete(IEnumerable<ActionPolicyDocumentDto> actionPolicyDocumentDtos)
@@ -60,24 +81,27 @@ internal sealed class MemoryPermissionStoreAsync : IPermissionStoreAsync
         return Task.FromResult(this._roles.FirstOrDefault(v => v.Id == id));
     }
 
-    public Task<IQueryable<ActionPolicyDocumentDto>> QueryActionPolicyDocuments()
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocumentsForRole(RoleDto role)
     {
-        return Task.FromResult(this._actionPolicyDocuments.AsQueryable());
+        return this._roleActionPolicyMappings
+            .Where(v => v.RoleId == role.Id)
+            .Select(
+                v =>
+                    this._actionPolicyDocuments.FirstOrDefault(
+                        v2 => v2.Id == v.ActionPolicyDocumentId
+                    )
+            )
+            .Where(v => v != null)
+            .AsAsyncEnumerable()!;
     }
 
-    public Task<IQueryable<RoleActionPolicyMappingDto>> QueryRoleActionPolicyMappings()
+    public IAsyncEnumerable<RoleDto> ListRolesForUser(string userId)
     {
-        return Task.FromResult(this._roleActionPolicyMappings.AsQueryable());
-    }
-
-    public Task<IQueryable<RoleDto>> QueryRoles()
-    {
-        return Task.FromResult(this._roles.AsQueryable());
-    }
-
-    public Task<IQueryable<UserRoleMappingDto>> QueryUserRoleMappings()
-    {
-        return Task.FromResult(this._userRoleMappings.AsQueryable());
+        return this._userRoleMappings
+            .Where(v => v.UserId == userId)
+            .Select(v => this._roles.FirstOrDefault(v2 => v2.Id == v.RoleId))
+            .Where(v => v != null)
+            .AsAsyncEnumerable()!;
     }
 
     public Task Upsert(ActionPolicyDocumentDto policyDocumentDto)
@@ -128,5 +152,15 @@ internal sealed class MemoryPermissionStoreAsync : IPermissionStoreAsync
             this._userRoleMappings.Add(userRoleMappingDto);
 
         return Task.CompletedTask;
+    }
+
+    public IAsyncEnumerable<RoleDto> ListRoles()
+    {
+        return this._roles.AsAsyncEnumerable();
+    }
+
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocuments()
+    {
+        return this._actionPolicyDocuments.AsAsyncEnumerable();
     }
 }

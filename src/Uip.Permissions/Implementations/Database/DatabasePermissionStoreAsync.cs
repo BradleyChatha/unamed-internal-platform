@@ -128,36 +128,40 @@ internal class DatabasePermissionStoreAsync : IPermissionStoreAsync
         );
     }
 
-    public Task<IQueryable<ActionPolicyDocumentDto>> QueryActionPolicyDocuments()
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocuments()
     {
-        return Task.FromResult(
-            this._db.ActionPolicyDocuments.Select(
+        return this._db.ActionPolicyDocuments
+            .Select(
                 x => new ActionPolicyDocumentDto(x.Id, x.Name, x.Description, x.Statements, null)
             )
-        );
+            .AsAsyncEnumerable();
     }
 
-    public Task<IQueryable<RoleActionPolicyMappingDto>> QueryRoleActionPolicyMappings()
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocumentsForRole(RoleDto role)
     {
-        return Task.FromResult(
-            this._db.RoleActionPolicyDocuments.Select(
-                x => new RoleActionPolicyMappingDto(x.RoleId, x.ActionPolicyDocumentId, null)
+        return this._db.RoleActionPolicyDocuments
+            .Where(x => x.RoleId == role.Id)
+            .Select(x => x.ActionPolicyDocument)
+            .Select(
+                x => new ActionPolicyDocumentDto(x.Id, x.Name, x.Description, x.Statements, null)
             )
-        );
+            .AsAsyncEnumerable();
     }
 
-    public Task<IQueryable<RoleDto>> QueryRoles()
+    public IAsyncEnumerable<RoleDto> ListRoles()
     {
-        return Task.FromResult(
-            this._db.Roles.Select(x => new RoleDto(x.Id, x.Name, x.Description, null))
-        );
+        return this._db.Roles
+            .Select(x => new RoleDto(x.Id, x.Name, x.Description, null))
+            .AsAsyncEnumerable();
     }
 
-    public Task<IQueryable<UserRoleMappingDto>> QueryUserRoleMappings()
+    public IAsyncEnumerable<RoleDto> ListRolesForUser(string userId)
     {
-        return Task.FromResult(
-            this._db.UserRoles.Select(x => new UserRoleMappingDto(x.UserId, x.RoleId, null))
-        );
+        return this._db.UserRoles
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Role)
+            .Select(x => new RoleDto(x.Id, x.Name, x.Description, null))
+            .AsAsyncEnumerable();
     }
 
     public Task Upsert(ActionPolicyDocumentDto policyDocumentDto)

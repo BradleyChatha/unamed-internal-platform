@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Uip.Common;
 using Uip.Common.Testing;
 using Uip.Permissions.Implementations.Database;
 using Uip.Permissions.Implementations.Database.Model;
@@ -528,7 +529,7 @@ public class DatabasePermissionStoreTests
         await store.Upsert(actionPolicyDocuments[1]);
 
         // Act
-        var result = await store.QueryActionPolicyDocuments();
+        var result = await store.ListActionPolicyDocuments().ToListAsync();
 
         // Assert
         result.Should().HaveCountGreaterThanOrEqualTo(2);
@@ -553,7 +554,7 @@ public class DatabasePermissionStoreTests
         await store.Upsert(roles[1]);
 
         // Act
-        var result = await store.QueryRoles();
+        var result = await store.ListRoles().ToListAsync();
 
         // Assert
         result.Should().HaveCountGreaterThanOrEqualTo(2);
@@ -614,30 +615,16 @@ public class DatabasePermissionStoreTests
         await store.Upsert(roleActionPolicyMappings[1]);
 
         // Act
-        var result = await store.QueryRoleActionPolicyMappings();
+        var result = await store.ListActionPolicyDocumentsForRole(roles[0]).ToListAsync();
 
         // Assert
         result.Should().HaveCountGreaterThanOrEqualTo(2);
-        result
-            .Should()
-            .Contain(
-                x =>
-                    x.RoleId == roleActionPolicyMappings[0].RoleId
-                    && x.ActionPolicyDocumentId
-                        == roleActionPolicyMappings[0].ActionPolicyDocumentId
-            );
-        result
-            .Should()
-            .Contain(
-                x =>
-                    x.RoleId == roleActionPolicyMappings[1].RoleId
-                    && x.ActionPolicyDocumentId
-                        == roleActionPolicyMappings[1].ActionPolicyDocumentId
-            );
+        result.Should().Contain(x => x.Id == roleActionPolicyMappings[0].ActionPolicyDocumentId);
+        result.Should().Contain(x => x.Id == roleActionPolicyMappings[1].ActionPolicyDocumentId);
     }
 
     [Fact]
-    public async Task QueryUserRoles()
+    public async Task ListRolesForUser()
     {
         // Arrange
         var roles = new[]
@@ -658,22 +645,15 @@ public class DatabasePermissionStoreTests
         await store.Upsert(userRoleMappings[1]);
 
         // Act
-        var result = await store.QueryUserRoleMappings();
+        var user0Roles = await store.ListRolesForUser(userRoleMappings[0].UserId).ToListAsync();
+        var user1Roles = await store.ListRolesForUser(userRoleMappings[1].UserId).ToListAsync();
 
         // Assert
-        result.Should().HaveCountGreaterThanOrEqualTo(2);
-        result
+        (user0Roles.Count + user1Roles.Count)
             .Should()
-            .Contain(
-                x =>
-                    x.UserId == userRoleMappings[0].UserId && x.RoleId == userRoleMappings[0].RoleId
-            );
-        result
-            .Should()
-            .Contain(
-                x =>
-                    x.UserId == userRoleMappings[1].UserId && x.RoleId == userRoleMappings[1].RoleId
-            );
+            .Be(2);
+        user0Roles.Should().Contain(x => x.Id == userRoleMappings[0].RoleId);
+        user1Roles.Should().Contain(x => x.Id == userRoleMappings[1].RoleId);
     }
 
     [Fact]

@@ -7,11 +7,6 @@ internal interface IPermissionStoreAsync
     public Task Upsert(RoleActionPolicyMappingDto roleActionPolicyMappingDto);
     public Task Upsert(UserRoleMappingDto userRoleMappingDto);
 
-    public Task<IQueryable<ActionPolicyDocumentDto>> QueryActionPolicyDocuments();
-    public Task<IQueryable<RoleDto>> QueryRoles();
-    public Task<IQueryable<RoleActionPolicyMappingDto>> QueryRoleActionPolicyMappings();
-    public Task<IQueryable<UserRoleMappingDto>> QueryUserRoleMappings();
-
     public Task Delete(IEnumerable<ActionPolicyDocumentDto> actionPolicyDocumentDtos);
     public Task Delete(IEnumerable<RoleDto> roleDtos);
     public Task Delete(IEnumerable<RoleActionPolicyMappingDto> roleActionPolicyMappingDtos);
@@ -19,4 +14,9 @@ internal interface IPermissionStoreAsync
 
     public Task<ActionPolicyDocumentDto?> GetActionPolicyDocument(Guid id);
     public Task<RoleDto?> GetRole(Guid id);
+
+    public IAsyncEnumerable<RoleDto> ListRoles();
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocuments();
+    public IAsyncEnumerable<RoleDto> ListRolesForUser(string userId);
+    public IAsyncEnumerable<ActionPolicyDocumentDto> ListActionPolicyDocumentsForRole(RoleDto role);
 }

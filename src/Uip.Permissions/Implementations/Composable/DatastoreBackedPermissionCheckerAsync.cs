@@ -1,3 +1,4 @@
+using System.Linq;
 using Uip.Common;
 using Uip.Permissions.Interfaces;
 
@@ -30,26 +31,19 @@ internal sealed class DatastoreBackedPermissionCheckerAsync : IPermissionChecker
             resourceKeyValues
         );
 
-        var userRoleIds = (await this._permissionStoreAsync.QueryUserRoleMappings())
-            .Where(map => map.UserId == userId)
-            .Select(map => map.RoleId);
+        var userRoles = this._permissionStoreAsync.ListRolesForUser(userId);
 
-        var roleActionPolicyDocumentIds = (
-            await this._permissionStoreAsync.QueryRoleActionPolicyMappings()
-        )
-            .Where(map => userRoleIds.Contains(map.RoleId))
-            .Select(map => map.ActionPolicyDocumentId);
+        var roleActionPolicyDocuments = userRoles.SelectMany(
+            role => this._permissionStoreAsync.ListActionPolicyDocumentsForRole(role)
+        );
 
-        var actionPolicyDocuments = (await this._permissionStoreAsync.QueryActionPolicyDocuments())
-            .Where(doc => roleActionPolicyDocumentIds.Contains(doc.Id))
-            .AsEnumerable();
+        var actionPolicyStatements = roleActionPolicyDocuments.SelectMany(doc => doc.Statements);
 
         // TODO: Benchmarking; decide whether to do a heuristic (e.g. statement or matcher count?)
         //       to choose between parallel and sequential, etc.
-        var anyStatementAllowsAction = actionPolicyDocuments
-            .SelectMany(doc => doc.Statements)
-            .AsParallel()
-            .Any(s => this.DoesStatementAllowAction(s, userId, action, resourceKeyValues));
+        var anyStatementAllowsAction = await actionPolicyStatements.AnyAsync(
+            s => this.DoesStatementAllowAction(s, userId, action, resourceKeyValues)
+        );
 
         if (anyStatementAllowsAction)
         {

@@ -34,7 +34,7 @@ services:
 
   kratos:
     image: oryd/kratos:v0.11
-    command: serve --config /etc/mount/kratos.yaml --dev --watch-courier
+    command: serve --config /etc/mount/kratos.yaml --watch-courier
     restart: always
     environment: {}
     ports:

@@ -2,8 +2,8 @@ namespace Uip.Permissions.Services;
 
 internal static class ServiceHelpers
 {
-    public const string PermissionDeniedErrorId = "permissions:PermissionDenied";
-    public const string PermissionDeniedNotFound = "permissions:NotFound";
+    public const string PermissionDeniedErrorId = "[permissions:error:PermissionDenied]";
+    public const string PermissionDeniedNotFound = "[permissions:error:ResourceNotFound]";
 
     public static GenericResponse PermissionDenied(
         string userId,

@@ -136,7 +136,7 @@ internal class PermissionsService : Permissions.PermissionsBase
 
         // Act
         // TODO: Pagination
-        var roles = (await _permissionStore.QueryRoles()).AsEnumerable();
+        var roles = _permissionStore.ListRoles();
 
         // Finalise
         return new ListRolesResponse

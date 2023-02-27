@@ -34,16 +34,10 @@ local_resource(
     "WebUI",
     serve_cmd="npm run dev",
     serve_dir="../src/WebUI",
-    labels=["running"]
-)
-cmd_button(
-    "webui:browsertest",
-    text="Browser Test",
-    resource="WebUI",
-    argv=["bash", "-c", """
-        cd ../src/WebUI;
-        npm run test;
-    """],
+    labels=["running"],
+    links=[
+        link("http://localhost:9000/ui/", "Open UI")
+    ]
 )
 
 # local_resource(
@@ -59,15 +53,14 @@ local_resource(
     serve_dir="../src/WebUI",
     labels=["tests"]
 )
-
-# NOTE: Anytime this resource runs, you need to manually restart the WebUI running resource
-#       this is because a different process changes some generated files - causing not found errors
-local_resource(
-    "WebUI - Browser Tests",
-    cmd="npm run test",
-    dir="../src/WebUI",
-    deps=["../src/WebUI/tests/"],
-    labels=["tests"]
+cmd_button(
+    "webui:browsertest",
+    text="Browser Test",
+    resource="WebUI - Tests",
+    argv=["bash", "-c", """
+        cd ../src/WebUI;
+        npm run test;
+    """],
 )
 
 #### Tests Services ####
@@ -129,4 +122,19 @@ cmd_button(
     """],
     requires_confirmation=True,
     inputs=[text_input("PROJECT")]
+)
+
+#### protoc invocation for the frontend ####
+
+local_resource(
+    "Protoc - Permissions",
+    cmd="""
+        protoc \\
+        -I=../src/Uip.Permissions/Protos \\
+        --plugin=../src/WebUI/node_modules/.bin/protoc-gen-ts_proto \\
+        --ts_proto_out=esModuleInterop=true,importSuffix=.js,env=browser,removeEnumPrefix=true,outputClientImpl=grpc-web:../src/WebUI/src/lib/protos \\
+        ../src/Uip.Permissions/Protos/*.proto
+    """,
+    labels=["protoc"],
+    deps=["../src/Uip.Permissions/Protos/"]
 )

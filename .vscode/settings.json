@@ -9,7 +9,7 @@
     },
     "[svelte]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "svelte.svelte-vscode"
     },
     "[html]": {
         "editor.formatOnSave": true,

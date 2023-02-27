@@ -53,7 +53,7 @@ export function t(
 	const value =
 		message && message.value
 			? bundle.formatPattern(message.value, args, errors)
-			: `<could not load localised message: ${locale}>`;
+			: `<could not load localised message: ${id}>`;
 
 	if (errors?.length)
 		console.error(`[playwright:error:t] Error(s) occurred while localising message '${id}'`);
